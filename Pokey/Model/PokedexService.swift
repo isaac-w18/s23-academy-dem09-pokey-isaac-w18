@@ -30,14 +30,35 @@ class PokedexService {
     /// The function that actually reads the JSON Pokedex object. It returns an optional type `Pokedex?` because there is a chance the data could be corrupted, decoding could fail, etc.
     func getPokedexFromJSON() -> Pokedex? {
         // MARK: Change this function to load the JSON from the Bundle
-        return nil
+        
+        // step 1: generate url
+        guard let url = Bundle.main.url(forResource: "pokedex-data", withExtension: ".json") else {
+            print("Bad URL")
+            return nil
+        }
+        
+        // step 2: fetch raw data using url
+        // try? takes any "throws" error and turns it into a nil
+        guard let data = try? Data(contentsOf: url) else {
+            print("Bad data")
+            return nil
+        }
+        
+        // step 3: you have data at this point, JSONDecoder().decode( /*codable type that you want json to fit into*/, data)
+        let decoder = JSONDecoder()
+        let decoded = try? decoder.decode(Pokedex.self, from: data)
+        
+        return decoded
+        
+        
+        
     }
     
     /// A method that searches the Pokdex for the `Pokemon` with the matching `num: String` propery
     /// Uses the .first(where: ()) method.
     func getPokemonFromNum(num: String) -> Pokemon {
         // MARK: Change this logic to find the Pokemon with the same num value
-        return Pokemon.example
+        return (PokedexService.shared.pokedex?.pokemon.first(where: {$0.num == num}))!
     }
     
 }

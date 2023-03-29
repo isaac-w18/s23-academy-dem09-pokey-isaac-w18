@@ -50,15 +50,36 @@ class PokemonDetailViewModel: ObservableObject {
     }
     // MARK: Computed property getting a list of the Pokemon's next evolutions.
     var nextEvolutions: [Pokemon]? {
-        return nil
+        var out = [Pokemon]()
+        
+        guard let evolutions = model.nextEvolution else {
+            return nil
+        }
+        
+        for evolution in evolutions {
+            out.append(PokedexService.shared.getPokemonFromNum(num: evolution.num))
+        }
+        
+        return out
+        
         
     }
     // MARK: Computed property getting a list of the Pokemon's previous evolutions.
     var prevEvolutions: [Pokemon]? {
-        return nil
+        var out = [Pokemon]()
+        
+        guard let evolutions = model.prevEvolution else {
+            return nil
+        }
+        
+        for evolution in evolutions {
+            out.append(PokedexService.shared.getPokemonFromNum(num: evolution.num))
+        }
+        
+        return out
     }
     // MARK: Returns the list of Pokemon in this Pokemon's evolution series. This will be a list of previous evolutions + current form + next evolutions
     var evolutionSeries: [Pokemon] {
-        return []
+        return prevEvolutions ?? [] + [model] + (nextEvolutions ?? [])
     }
 }
